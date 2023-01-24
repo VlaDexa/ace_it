@@ -1,7 +1,7 @@
 # ace_it
 ### Auto Convert Enums
 ## Description
-Just a smal proc_macro to automatically generate From trait impls for each unnamed variant of an enum
+Just a small proc_macro to automatically generate From trait impls for each unnamed variant of an enum
 
 ## Usage
 
