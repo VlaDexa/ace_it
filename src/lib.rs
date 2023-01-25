@@ -7,8 +7,7 @@
 //!
 //! ## Example
 //! ```
-//! #[macro_use]
-//! extern crate ace_it;
+//! #[macro_use] extern crate ace_it;
 //!
 //! #[derive(Debug)]
 //! #[ace_it]
@@ -25,6 +24,16 @@
 //!
 //! Now you can use `?` on any of these types and get an Error back.
 //! ```
+//! # #[macro_use] extern crate ace_it;
+//! # 
+//! # #[derive(Debug)]
+//! # #[ace_it]
+//! # enum Error {
+//! #   Io(std::io::Error),
+//! #   ParseInt(std::num::ParseIntError),
+//! #   ParseFloat(std::num::ParseFloatError),
+//! # }
+//! 
 //! use std::io::Read;
 //!
 //! fn read_int<R: Read>(reader: &mut R) -> Result<i32, Error> {
@@ -39,6 +48,30 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens};
 use syn::{spanned::Spanned, Fields, Variant};
 
+/// Generates [From] impls for the given enum.
+/// ## Usage
+/// ### Applying the macro
+/// This will generate the From impls for each type and turns it into an accompanying variant.
+/// ```
+/// # #[macro_use] extern crate ace_it;
+/// #[ace_it]
+/// enum Error {
+///   Io(std::io::Error),
+///   ParseInt(std::num::ParseIntError),
+///   ParseFloat(std::num::ParseFloatError),
+/// }
+/// ```
+/// ### Compile errors
+/// This will error because there are two variants with the same type.
+/// There is no way to know which one to use. 
+/// ```compile_fail
+/// # #[macro_use] extern crate ace_it;
+/// #[ace_it]
+/// enum SomeEnum {
+///     A(i32),
+///     B(i32) // Duplicate i32, shouldn't compile
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn ace_it(
     _: proc_macro::TokenStream,
